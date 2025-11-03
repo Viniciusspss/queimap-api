@@ -4,8 +4,7 @@ import br.com.maisunifacisa.queimap.controller.response.UserResponse;
 import br.com.maisunifacisa.queimap.service.user.SearchUserService;
 import br.com.maisunifacisa.queimap.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -15,13 +14,16 @@ public class UserController {
     private final UserService userService;
     private final SearchUserService searchUserService;
 
+    @GetMapping("/me")
     public UserResponse getAuthenticatedCustomer() { return searchUserService.searchAuthenticatedUser(); }
 
-    public UserResponse getCustomerById( final Long id) {
+    @GetMapping("/{id}")
+    public UserResponse getCustomerById( @PathVariable final Long id) {
         return searchUserService.searchById(id);
     }
 
-    public void deleteById(final Long id) {
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable final Long id) {
         userService.deleteById(id);
     }
 

@@ -1,14 +1,18 @@
 package br.com.maisunifacisa.queimap.service;
 
 import br.com.maisunifacisa.queimap.controller.request.CommentRequest;
+import br.com.maisunifacisa.queimap.controller.response.CommentResponse;
 import br.com.maisunifacisa.queimap.controller.response.UserResponse;
 import br.com.maisunifacisa.queimap.domain.Comment;
+import br.com.maisunifacisa.queimap.domain.User;
+import br.com.maisunifacisa.queimap.mapper.CommentMapper;
 import br.com.maisunifacisa.queimap.repository.CommentRepository;
 import br.com.maisunifacisa.queimap.service.user.SearchUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 import static br.com.maisunifacisa.queimap.mapper.CommentMapper.toEntity;
@@ -22,9 +26,10 @@ public class CommentService {
     private final SearchUserService searchUserService;
 
     public void create(CommentRequest request) {
-        UserResponse user = searchUserService.searchAuthenticatedUser();
+        User user = searchUserService.getAuthenticatedUser();
 
         Comment comment = toEntity(request);
+        comment.setUser(user);
 
         commentRepository.save(comment);
     }
@@ -37,5 +42,9 @@ public class CommentService {
         }
 
         commentRepository.deleteById(id);
+    }
+
+    public List<CommentResponse> listAll() {
+        return commentRepository.findAll().stream().map(CommentMapper::toResponse).toList();
     }
 }
